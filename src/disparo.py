@@ -90,10 +90,11 @@ def enviar_mensagens(driver, caminho_excel, log_func=print):
 
     for index, row in campanha.iterrows():
         nome = row.get("Nome")
-        telefone1 = formatar_numero(str(row.get("Telefone1")))
-        telefone2 = formatar_numero(str(row.get("Telefone2"))) if not pd.isna(row.get("Telefone2")) else None
+        telefone1 = str(row.get("Telefone1"))
+        telefone2 = str(row.get("Telefone2")) if not pd.isna(row.get("Telefone2")) else None
         mensagem = row.get("Mensagem")
         imagem = row.get("Imagem", None)
+        pdf = row.get("PDF", None)  # NOVO CAMPO
 
         numero_para_tentar = [telefone1]
         if telefone2:
@@ -101,21 +102,61 @@ def enviar_mensagens(driver, caminho_excel, log_func=print):
 
         enviado = False
         for telefone in numero_para_tentar:
-            if not telefone:
+            if not telefone or pd.isna(telefone):
                 continue
 
-            if tentar_enviar(driver, telefone, mensagem, imagem):
+            try:
+                link_whatsapp = f"https://web.whatsapp.com/send?phone={telefone}&text&app_absent=0"
+                driver.get(link_whatsapp)
+
+                caixa_texto = WebDriverWait(driver, 30).until(
+                    EC.presence_of_element_located((By.XPATH, '//div[@contenteditable="true"][@data-tab="10"]'))
+                )
+
+                caixa_texto.click()
+                time.sleep(1)
+
+                if mensagem and not pd.isna(mensagem):
+                    for linha in mensagem.split('\n'):
+                        caixa_texto.send_keys(linha)
+                        caixa_texto.send_keys('\n')
+
+                # Envio de imagem
+                if imagem and not pd.isna(imagem):
+                    botao_anexo = driver.find_element(By.CSS_SELECTOR, "span[data-icon='clip']")
+                    botao_anexo.click()
+                    time.sleep(1)
+                    upload = driver.find_element(By.CSS_SELECTOR, "input[type='file']")
+                    upload.send_keys(os.path.expanduser(imagem.strip()))
+                    time.sleep(2)
+                    botao_enviar = driver.find_element(By.CSS_SELECTOR, "span[data-icon='send']")
+                    botao_enviar.click()
+                    time.sleep(5)
+
+                # Envio de PDF
+                if pdf and not pd.isna(pdf):
+                    botao_anexo = driver.find_element(By.CSS_SELECTOR, "span[data-icon='clip']")
+                    botao_anexo.click()
+                    time.sleep(1)
+                    upload = driver.find_element(By.CSS_SELECTOR, "input[type='file']")
+                    upload.send_keys(os.path.expanduser(pdf.strip()))
+                    time.sleep(2)
+                    botao_enviar = driver.find_element(By.CSS_SELECTOR, "span[data-icon='send']")
+                    botao_enviar.click()
+                    time.sleep(5)
+
                 log_func(f"Mensagem enviada para {nome} ({telefone})")
                 enviado = True
                 break
-            else:
-                log_func(f"Falha ao enviar para {nome} no número {telefone}")
+
+            except Exception as e:
+                log_func(f"Falha ao enviar para {nome} no número {telefone}: {e}")
+                time.sleep(5)
 
         if not enviado:
             salvar_contato_nao_enviado(nome, telefone1, telefone2)
 
-        time.sleep(random.uniform(2, 4))
-
+        time.sleep(random.randint(3, 10))
 
 def salvar_contato_nao_enviado(nome, telefone1, telefone2):
     df = pd.DataFrame([{"Nome": nome, "Telefone1": telefone1, "Telefone2": telefone2}])
