@@ -1,101 +1,94 @@
-📲 Whatsapp Disparador
+# Disparador de Mensagens via WhatsApp Web
 
-Um projeto automatizado com interface gráfica para envio de mensagens no WhatsApp Web utilizando Python, Selenium e Tkinter. Permite o envio de mensagens personalizadas, com ou sem imagem, para uma lista de contatos em planilha Excel.
-🧰 Tecnologias Utilizadas
+Este projeto automatiza o envio de mensagens personalizadas via WhatsApp Web utilizando **Selenium** e **Python**, com suporte a **mensagens de texto, imagens e documentos (PDFs)**. Ele também inclui uma interface gráfica simples feita com `tkinter` para facilitar o uso sem depender do terminal.
 
-    Python 3.10+
+## ✅ Funcionalidades
 
-    Selenium
+- Envio automático de mensagens personalizadas para contatos listados em um arquivo Excel.
+- Suporte ao envio de:
+  - Texto
+  - Imagens (enviadas corretamente como mídia)
+  - Documentos (PDFs)
+- Suporte a dois números por contato (`Telefone1` e `Telefone2`)
+- Registro automático dos contatos que não receberam a mensagem (`nao_enviados.xlsx`)
+- Interface gráfica amigável para facilitar o uso
 
-    Tkinter
+## 🧰 Requisitos
 
-    Pandas
+- Python 3.8 ou superior
+- Google Chrome instalado
+- [ChromeDriver](https://sites.google.com/chromium.org/driver/) compatível com a versão do seu Chrome
+- Sessão do WhatsApp Web previamente autenticada
 
-    ChromeDriver
+## 💻 Instalação
 
-⚙️ Instalação
+### Linux
 
-📦 Requisitos
+```bash
+sudo apt update
+sudo apt install python3-pip -y
+pip3 install -r requirements.txt
 
-    Python 3.10 ou superior
+Windows
 
-    Google Chrome instalado
+    Instale o Python 3: https://www.python.org/downloads/
 
-    ChromeDriver compatível com sua versão do Chrome
+    Instale as dependências:
 
-💻 Linux
+    pip install -r requirements.txt
 
-    Clone o repositório:
+    Faça download do ChromeDriver compatível com sua versão do Chrome e adicione ao PATH do sistema.
 
-git clone https://github.com/gustavolima973/Whatsapp-Disparador.git
-cd Whatsapp-Disparador
+📄 Estrutura esperada da planilha (Excel)
 
-Crie um ambiente virtual (opcional mas recomendado):
+A planilha deve conter as colunas abaixo:
+Nome	Telefone1	Telefone2	Mensagem	Imagem	PDF
+João	55999999999		Olá João!	/caminho/imagem.jpg	/caminho/arquivo.pdf
 
-python3 -m venv venv
-source venv/bin/activate
+    Mensagem: Pode conter múltiplas linhas (use Alt + Enter no Excel).
 
-Instale as dependências:
+    Imagem: Caminho completo ou relativo até o arquivo.
 
-pip install -r requirements.txt
+    PDF: Caminho completo ou relativo até o arquivo.
 
-Garanta que o ChromeDriver esteja instalado:
+🚀 Como usar
 
-    Faça download em: https://chromedriver.chromium.org/downloads
+    Verifique se o Chrome está fechado e sua conta do WhatsApp Web já está logada.
 
-    Mova-o para /usr/local/bin/:
+    Execute a interface:
 
-    sudo mv chromedriver /usr/local/bin/
-    sudo chmod +x /usr/local/bin/chromedriver
+    python3 main.py
 
-Execute o programa:
+    Selecione o arquivo Excel e clique em "Iniciar disparo".
 
-    python3 src/main.py
+    O script abrirá o WhatsApp Web automaticamente e começará os envios.
 
-🪟 Windows
+📁 Estrutura do Projeto
 
-    Clone ou baixe o repositório e entre na pasta:
+whatsapp_disparador/
+├── main.py                  # Interface gráfica (Tkinter)
+├── disparo.py               # Lógica de envio com Selenium
+├── requirements.txt         # Dependências
+├── README.md                # Documentação
+└── nao_enviados.xlsx        # Contatos que não receberam a mensagem
 
-    Instale o Python:
-    Baixe em: https://www.python.org/downloads/
-    Certifique-se de marcar a opção "Add Python to PATH" durante a instalação.
+🧠 Possíveis melhorias futuras
 
-    Instale as dependências: Abra o terminal (cmd ou PowerShell) na pasta do projeto:
+    Logs detalhados por envio (em arquivo .txt ou .csv)
 
-pip install -r requirements.txt
+    Integração com banco de dados para controle de campanhas
 
-Baixe o ChromeDriver:
+    Suporte a envio em lote com divisão automática de planilhas grandes
 
-    Verifique sua versão do Chrome digitando chrome://version no navegador.
+    Integração com email para notificação do status de envio
 
-    Baixe o ChromeDriver correspondente: https://chromedriver.chromium.org/downloads
+    Suporte a áudios e vídeos
 
-    Coloque o chromedriver.exe na pasta do projeto ou em uma pasta no PATH do sistema.
+    Controle de tempo mais avançado entre envios (modo stealth)
 
-Execute o programa:
+🤝 Contribuição
 
-    python src/main.py
-
-
-💾 Funcionalidades
-
-    Envio automatizado de mensagens para contatos via WhatsApp Web.
-
-    Interface gráfica para facilitar a escolha da planilha.
-
-    Suporte a envio de imagens.
-
-    Tenta segundo número caso o primeiro falhe.
-
-    Gera relatório com números que não receberam as mensagens.
-
-🚧 Melhorias Futuras
-
-    Detecção automática de falhas na conexão.
-
-    Interface para editar mensagens antes do envio.
-
-    Dashboard com resultados de envio.
+Sugestões e melhorias são muito bem-vindas. Abra uma issue ou envie um pull request!
 
 🧑‍💻 Autor
 
