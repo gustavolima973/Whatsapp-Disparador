@@ -1,55 +1,59 @@
+# interface.py
 import tkinter as tk
-from tkinter import filedialog, messagebox, scrolledtext
-from disparo import iniciar_driver, enviar_mensagens
-import threading
+from tkinter import filedialog, messagebox
 import os
-
-class App:
+import threading
+from disparo import iniciar_driver, enviar_mensagens
+class WhatsAppApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("WhatsApp Disparador")
+        self.root.title("Disparador WhatsApp")
+        self.root.geometry("500x300")
+        self.root.resizable(False, False)
 
-        # Botão para selecionar planilha
-        self.botao_selecionar = tk.Button(root, text="Selecionar Planilha", command=self.selecionar_arquivo)
-        self.botao_selecionar.pack(pady=10)
+        self.label = tk.Label(root, text="Selecione a planilha com os contatos e mensagens:")
+        self.label.pack(pady=10)
 
-        # Botão para iniciar disparo
-        self.botao_iniciar = tk.Button(root, text="Iniciar Disparo", command=self.iniciar_disparo, state=tk.DISABLED)
-        self.botao_iniciar.pack(pady=10)
+        self.btn_selecionar = tk.Button(root, text="Selecionar Planilha", command=self.selecionar_planilha)
+        self.btn_selecionar.pack(pady=10)
 
-        # Área de log
-        self.log = scrolledtext.ScrolledText(root, width=60, height=20)
-        self.log.pack(padx=10, pady=10)
+        self.label_arquivo = tk.Label(root, text="Nenhum arquivo selecionado.")
+        self.label_arquivo.pack(pady=5)
 
-        self.caminho_planilha = None
+        self.btn_enviar = tk.Button(root, text="Iniciar Envio", command=self.iniciar_envio, state=tk.DISABLED)
+        self.btn_enviar.pack(pady=20)
 
-    def selecionar_arquivo(self):
-        self.caminho_planilha = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
-        if self.caminho_planilha:
-            self.botao_iniciar.config(state=tk.NORMAL)
-            self.log.insert(tk.END, f"Planilha selecionada: {self.caminho_planilha}\n")
-            self.log.see(tk.END)
+        self.log_text = tk.Text(root, height=8, width=60, state=tk.DISABLED)
+        self.log_text.pack(pady=5)
 
-    def iniciar_disparo(self):
-        self.log.insert(tk.END, "Iniciando disparo...\n")
-        self.log.see(tk.END)
-        threading.Thread(target=self.disparar_mensagens).start()  # Para não travar a interface
+    def selecionar_planilha(self):
+        caminho = filedialog.askopenfilename(
+            filetypes=[("Arquivos Excel", "*.xlsx")]
+        )
+        if caminho:
+            self.caminho_planilha = caminho
+            self.label_arquivo.config(text=os.path.basename(caminho))
+            self.btn_enviar.config(state=tk.NORMAL)
 
-    def disparar_mensagens(self):
+    def iniciar_envio(self):
+        self.log("[INFO] Iniciando envio... Aguarde o carregamento do WhatsApp Web.")
+        threading.Thread(target=self.enviar).start()
+
+    def enviar(self):
         try:
             driver = iniciar_driver()
-            enviar_mensagens(driver, self.caminho_planilha, log_func=self.atualizar_log)
-            driver.quit()
-            self.atualizar_log("Disparo concluído!\n")
+            enviar_mensagens(driver, self.caminho_planilha, log_func=self.log)
+            self.log("[FINALIZADO] Envio concluído.")
         except Exception as e:
-            messagebox.showerror("Erro", str(e))
-            self.atualizar_log(f"Erro: {e}\n")
+            self.log(f"[ERRO] Erro ao iniciar envio: {e}")
 
-    def atualizar_log(self, mensagem):
-        self.log.insert(tk.END, mensagem + "\n")
-        self.log.see(tk.END)
+    def log(self, mensagem):
+        self.log_text.config(state=tk.NORMAL)
+        self.log_text.insert(tk.END, mensagem + "\n")
+        self.log_text.see(tk.END)
+        self.log_text.config(state=tk.DISABLED)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     root = tk.Tk()
-    app = App(root)
+    app = WhatsAppApp(root)
     root.mainloop()
