@@ -1,0 +1,12 @@
+{
+    "chromedriver_path": "/usr/local/bin/chromedriver",
+    "chrome_user_data": "~/.config/google-chrome",
+    "chrome_profile": "Default",
+    "excel_path": "clientes.xlsx",
+    "nao_enviados_path": "nao_enviados.xlsx",
+    "delay_min": 4,
+    "delay_max": 7,
+    "timeout_upload": 10,
+    "timeout_click": 10,
+    "log_file": "logs.txt"
+}

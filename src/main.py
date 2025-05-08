@@ -1,7 +1,7 @@
-from interface import App
+from interface import WhatsAppApp
 import tkinter as tk
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = App(root)
+    app = WhatsAppApp(root)
     root.mainloop()

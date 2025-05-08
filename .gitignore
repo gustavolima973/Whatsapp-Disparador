@@ -1,0 +1,87 @@
+# =============================================
+# ARQUIVOS DO SISTEMA OPERACIONAL/IDE
+# =============================================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.swn
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# =============================================
+# ARQUIVOS TEMPORÁRIOS DO OFFICE/EDITORES
+# =============================================
+~$*
+*.~
+~lock.*
+*.tmp
+~*.xlsx#
+~*.xls#
+~*.ods#
+*.xlk
+*.bak
+
+# =============================================
+# ARQUIVOS PYTHON
+# =============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.python-version
+*.pytest_cache/
+.mypy_cache/
+
+# =============================================
+# AMBIENTES VIRTUAIS
+# =============================================
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# =============================================
+# ARQUIVOS DE LOG E DADOS SENSÍVEIS
+# =============================================
+*.log
+logs/
+*.env
+*.secret
+*.key
+*.token
+*.credentials
+
+# =============================================
+# ARQUIVOS DE PACOTES/INSTALAÇÃO
+# =============================================
+*.egg-info/
+*.egg
+dist/
+build/
+pip-wheel-metadata/
+*.manifest
+*.spec
+
+# =============================================
+# ARQUIVOS DO PROJETO ESPECÍFICOS
+# =============================================
+/drivers/
+/PDF/temp_*
+/imagens/temp_*
+/nao_enviados_*.xlsx
+
+# =============================================
+# ARQUIVOS DO CHROME/WHATSWEB
+# =============================================
+chromedriver.log
+/UserData/
+/Local Storage/
+/Session Storage/

@@ -4,6 +4,9 @@ from tkinter import filedialog, messagebox
 import os
 import threading
 from disparo import iniciar_driver, enviar_mensagens
+import json
+with open('config.json', 'r') as f:
+    config = json.load(f)
 class WhatsAppApp:
     def __init__(self, root):
         self.root = root
@@ -38,11 +41,12 @@ class WhatsAppApp:
     def iniciar_envio(self):
         self.log("[INFO] Iniciando envio... Aguarde o carregamento do WhatsApp Web.")
         threading.Thread(target=self.enviar).start()
-
+    
     def enviar(self):
         try:
-            driver = iniciar_driver()
-            enviar_mensagens(driver, self.caminho_planilha, log_func=self.log)
+            driver = iniciar_driver(config)
+            config['excel_path'] = self.caminho_planilha
+            enviar_mensagens(driver, config, log_func=self.log)
             self.log("[FINALIZADO] Envio concluído.")
         except Exception as e:
             self.log(f"[ERRO] Erro ao iniciar envio: {e}")
