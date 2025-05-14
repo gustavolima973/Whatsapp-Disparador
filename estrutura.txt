@@ -1,0 +1,41 @@
+.
+├── ~
+├── assets
+│   ├── icone.ico
+│   │   └── icone.png
+│   ├── imagens
+│   │   └── galo.jpg
+│   └── PDF
+│       └── catalogo.pdf
+├── config
+│   └── config.json
+├── data
+│   ├── clientes.xlsx
+│   └── nao_enviados.xlsx
+├── docs
+│   └── README.md
+├── estrutura.txt
+├── logs
+│   └── requirements.txt
+├── nao_enviados.xlsx
+└── src
+    ├── build
+    │   ├── bdist.linux-x86_64
+    │   └── lib
+    │       ├── disparo.py
+    │       ├── interface.py
+    │       ├── main.py
+    │       └── whatsapp_disparador.egg-info
+    │           ├── dependency_links.txt
+    │           ├── entry_points.txt
+    │           ├── PKG-INFO
+    │           ├── requires.txt
+    │           ├── SOURCES.txt
+    │           └── top_level.txt
+    ├── disparo.py
+    ├── interface.py
+    ├── main.py
+    └── __pycache__
+        └── disparo.cpython-310.pyc
+
+15 directories, 23 files

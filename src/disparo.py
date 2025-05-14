@@ -1,169 +1,118 @@
-import json
+# src/disparo.py
 import os
-import re
+
 import time
-import random
+
 import pandas as pd
-from pathlib import Path
+
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.service import Service
+
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-def carregar_config(caminho_config):
-    with open(caminho_config, 'r', encoding='utf-8') as f:
-        return json.load(f)
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from webdriver_manager.chrome import ChromeDriverManager
+import logging
+import numpy as np
 
+# Configura logs
+logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 
-def iniciar_driver(config):
-    chrome_options = Options()
-    chrome_options.add_argument(f"--user-data-dir={config['chrome_user_data']}")
-    chrome_options.add_argument(f"--profile-directory={config['chrome_profile']}")
-    chrome_options.add_argument("--start-maximized")
-
-    service = Service(config['chromedriver_path'])
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+def iniciar_driver():
+    options = webdriver.ChromeOptions()
+    options.add_argument("--user-data-dir=./User_Data")  # Mantém a sessão
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    driver.get("https://web.whatsapp.com")
+    logging.info("Aguardando login no WhatsApp Web...")
+    WebDriverWait(driver, 60).until(
+        EC.presence_of_element_located((By.ID, "pane-side"))
+    )
     return driver
 
 
 def formatar_numero(numero):
-    numero = re.sub(r'\D', '', str(numero))
-    if numero.startswith('55'):
-        return numero
-    elif len(numero) in [10, 11]:
-        return '55' + numero
-    return None
+    return ''.join(filter(str.isdigit, str(numero)))
 
+def enviar_mensagem(driver, contato, mensagem, caminho_imagem, caminho_pdf):
+    numero_formatado = formatar_numero(contato)
+    
+    if not numero_formatado.startswith('55') or len(numero_formatado) < 12:
+        logging.warning(f"Número inválido ignorado: {contato}")
+        return
+    
+    link = f"https://web.whatsapp.com/send?phone={numero_formatado}&text={mensagem}"
+    driver.get(link)
 
-def enviar_midia(driver, caminho_arquivo):
+    
     try:
-        print(f"[INFO] Tentando enviar arquivo: {caminho_arquivo}")
-      
-        botao_mais = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "span[data-icon='plus']"))
+        WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.XPATH, "//div[@contenteditable='true'][@data-tab='10']"))
         )
-        driver.execute_script("arguments[0].click();", botao_mais)
-        time.sleep(1)
+        input_box = driver.find_element(By.XPATH, "//div[@contenteditable='true'][@data-tab='10']")
+        ActionChains(driver).move_to_element(input_box).send_keys(Keys.ENTER).perform()
+        logging.info(f"Mensagem enviada para {contato}")
 
-       
-        botoes_menu = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div[role='button']"))
+        if pd.notna(caminho_imagem) and os.path.exists(caminho_imagem):
+            enviar_midia(driver, caminho_imagem, tipo='imagem')
+
+        if pd.notna(caminho_pdf) and os.path.exists(caminho_pdf):
+            enviar_midia(driver, caminho_pdf, tipo='pdf')
+
+    except TimeoutException:
+        logging.error(f"[ERRO] Tempo esgotado para {contato}")
+
+
+def enviar_midia(driver, caminho, tipo='imagem'):
+    try:
+        WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "span[data-icon='clip']"))
         )
+        driver.find_element(By.CSS_SELECTOR, "span[data-icon='clip']").click()
 
-       
-        extensao = Path(caminho_arquivo).suffix.lower()
-        if extensao in ['.jpg', '.jpeg', '.png', '.gif']:
-            botoes_menu[1].click()
-            tipo = "imagem"
+        if tipo == 'imagem':
+            seletor = "input[accept='image/*,video/mp4,video/3gpp,video/quicktime']"
         else:
-            botoes_menu[0].click()
-            tipo = "documento"
+            seletor = "input[accept='*']"
 
-      
-        upload = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='file']"))
+        upload = WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, seletor))
         )
+        upload.send_keys(os.path.abspath(caminho))
 
-        caminho_absoluto = os.path.abspath(os.path.expanduser(caminho_arquivo.strip()))
-        if not os.path.exists(caminho_absoluto):
-            print(f"[ERRO] Arquivo não encontrado: {caminho_absoluto}")
-            return
-
-        upload.send_keys(caminho_absoluto)
-        print("[INFO] Arquivo enviado para o input.")
-
-      
-        botao_enviar = WebDriverWait(driver, 30).until(
+        WebDriverWait(driver, 15).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "span[data-icon='send']"))
-        )
-        driver.execute_script("arguments[0].click();", botao_enviar)
-        print(f"[SUCESSO] {tipo.capitalize()} enviado com sucesso!")
+        ).click()
 
-        time.sleep(5)
+        logging.info(f"{tipo.upper()} enviado: {os.path.basename(caminho)}")
 
     except Exception as e:
-        print(f"[ERRO] Falha ao enviar mídia: {e}")
+        logging.error(f"[ERRO] Falha ao enviar {tipo}: {e}")
 
+def processar_planilha(caminho_planilha):
+    df = pd.read_excel(caminho_planilha)
+    colunas_necessarias = ['nome', 'telefone1', 'mensagem', 'imagem', 'pdf']
+    for coluna in colunas_necessarias:
+        if coluna not in df.columns:
+            raise ValueError(f"Coluna ausente na planilha: {coluna}")
+    return df[colunas_necessarias]
 
-def salvar_contato_nao_enviado(config, nome, telefone1, telefone2):
-    df = pd.DataFrame([{"Nome": nome, "Telefone1": telefone1, "Telefone2": telefone2}])
-    caminho_falha = os.path.abspath(os.path.expanduser(config['nao_enviados_path']))
+def executar_disparo(caminho_planilha):
+    contatos = processar_planilha(caminho_planilha)
+    driver = iniciar_driver()
+    for _, contato in contatos.iterrows():
+        try:
+            logging.info(f"Enviando para {contato['nome']} ({contato['telefone1']})")  # ← AQUI
 
-    if os.path.exists(caminho_falha):
-        df_existente = pd.read_excel(caminho_falha)
-        df_total = pd.concat([df_existente, df], ignore_index=True)
-    else:
-        df_total = df
-
-    df_total.to_excel(caminho_falha, index=False)
-
-
-def enviar_mensagens(driver, config, log_func=print):
-    campanha = pd.read_excel(config['excel_path'])
-
-    for _, row in campanha.iterrows():
-        nome = row.get("Nome")
-        telefone1 = str(row.get("Telefone1"))
-        telefone2 = str(row.get("Telefone2")) if not pd.isna(row.get("Telefone2")) else None
-        mensagem = row.get("Mensagem")
-        imagem = row.get("Imagem", None)
-        pdf = row.get("PDF", None)
-
-        numeros = [telefone for telefone in [telefone1, telefone2] if telefone and not pd.isna(telefone)]
-        enviado = False
-        for telefone in numeros:
-            try:
-                numero_formatado = formatar_numero(telefone)
-                if not numero_formatado:
-                    continue
-
-                link = f"https://web.whatsapp.com/send?phone={numero_formatado}&text&app_absent=0"
-                driver.get(link)
-
-          
-                caixa = WebDriverWait(driver, 30).until(
-                    EC.presence_of_element_located((By.XPATH, '//div[@contenteditable="true"][@data-tab="10"]'))
-                )
-                caixa.click()
-                time.sleep(1)
-
-         
-                if mensagem and not pd.isna(mensagem):
-                    for linha in mensagem.split('\n'):
-                        caixa.send_keys(linha)
-                        caixa.send_keys('\n')
-                    time.sleep(2)
-                elif imagem or pdf:
-                    caixa.send_keys('\n')
-                    time.sleep(1)
-
-         
-                if imagem and not pd.isna(imagem):
-                    enviar_midia(driver, imagem)
-
-     
-                if pdf and not pd.isna(pdf):
-                    enviar_midia(driver, pdf)
-
-                log_func(f"[SUCESSO] Mensagem enviada para {nome} ({telefone})")
-                enviado = True
-                break
-
-            except Exception as e:
-                log_func(f"[ERRO] Falha com {nome} ({telefone}): {e}")
-                time.sleep(5)
-
-        if not enviado:
-            salvar_contato_nao_enviado(config, nome, telefone1, telefone2)
-
-        time.sleep(random.randint(config['delay_min'], config['delay_max']))
-
-
-if __name__ == "__main__":
-    config_path = os.path.abspath(os.path.expanduser("~/Desktop/meus_projetos/whatsapp_disparador/config.json"))
-    config = carregar_config(config_path)
-
-    driver = iniciar_driver(config)
-    enviar_mensagens(driver, config)
+            enviar_mensagem(driver,
+                            contato['telefone1'],
+                            contato['mensagem'],
+                            contato.get('imagem', None),
+                            contato.get('pdf', None))
+            time.sleep(5)
+        except Exception as e:
+            logging.error(f"[ERRO] {e}")
     driver.quit()
+

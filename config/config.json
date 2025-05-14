@@ -1,12 +1,15 @@
 {
-    "chromedriver_path": "/usr/local/bin/chromedriver",
-    "chrome_user_data": "~/.config/google-chrome",
-    "chrome_profile": "Default",
-    "excel_path": "clientes.xlsx",
-    "nao_enviados_path": "nao_enviados.xlsx",
-    "delay_min": 4,
-    "delay_max": 7,
-    "timeout_upload": 10,
-    "timeout_click": 10,
-    "log_file": "logs.txt"
-}
+    "modo": "interface",  
+  
+    "caminho_planilha": "/home/gustavo/Desktop/whatsapp_disparador/clientes.xlsx",
+  
+    "wait_login": 15,        
+    "wait_load_chat": 10,   
+    "wait_between_msgs": 5,   
+  
+    "user_data_dir": "./User_Data",         
+    "nao_enviados_path": "/home/gustavo/Desktop/whatsapp_disparador/nao_enviados.xlsx", 
+  
+    "default_image_path": "/home/gustavo/Desktop/whatsapp_disparador/imagens",
+    "default_pdf_path": "/home/gustavo/Desktop/whatsapp_disparador/PDF"
+  }

@@ -1,0 +1,6 @@
+selenium>=4.10.0
+pandas>=2.0.3
+openpyxl>=3.1.2
+python-dotenv>=1.0.0
+setuotools>=80.4.0
+webdriver-manager
