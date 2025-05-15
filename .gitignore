@@ -13,19 +13,25 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+*.code-workspace
 
 # =============================================
 # ARQUIVOS TEMPORÁRIOS
 # =============================================
-~/
+~*
 *.~
 ~lock.*
 *.tmp
+*.temp
 ~*.xlsx#
 ~*.xls#
 
+
 *.bak
 *.log
+*.cache
+*.rej
+*.orig
 
 # =============================================
 # PYTHON
@@ -34,9 +40,14 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-.python-version
+
 *.pytest_cache/
 .mypy_cache/
+.python-version
+.ipynb_checkpoints/
+*.ipynb
+.mypy.ini
+.pytype/
 
 # =============================================
 # AMBIENTES VIRTUAIS
@@ -47,6 +58,10 @@ env/
 ENV/
 env.bak/
 venv.bak/
+pyvenv.cfg
+Pipfile
+Pipfile.lock
+poetry.lock
 
 # =============================================
 # LOGS E DADOS SENSÍVEIS
@@ -57,8 +72,13 @@ venv.bak/
 *.key
 *.token
 *.credentials
+*.config
 logs/
-nao_enviados.xlsx
+*.log
+*.sqlite
+*.sqlite3
+nao_enviados*.xlsx
+config/local_*.json
 
 # =============================================
 # PACOTES E ARTEFATOS DE INSTALAÇÃO
@@ -70,21 +90,40 @@ build/
 pip-wheel-metadata/
 *.manifest
 *.spec
+site/
+.coverage
+htmlcov/
+.coverage.*
+*.cover
+*.mo
+*.pot
 
 # =============================================
 # ESPECÍFICOS DO PROJETO
 # =============================================
-drivers/
+# Exceções - arquivos que DEVEM ser versionados
+!drivers/chromedriver*
+!icons/icone.*
+!imagens/galo.jpg
+!PDF/catalogo.pdf
+
+# Ignorar padrões gerais
+drivers/*
+!drivers/chromedriver*
 User_Data/
 profile/
 clientes.xlsx
+nao_enviados.xlsx
 estrutura.txt
+check_env.py
 
 # Cache temporário de planilhas/mídia
 PDF/temp_*
 imagens/temp_*
 nao_enviados_*.xlsx
-
+clientes_*.xlsx
+*.download
+*.part
 # =============================================
 # COMPILAÇÕES CHROME/WHATSAPP
 # =============================================
@@ -92,3 +131,9 @@ chromedriver.log
 chrome_debug.log
 Local Storage/
 Session Storage/
+Crash Reports/
+GPUCache/
+Application Cache/
+Service Worker/
+IndexedDB/
+File System/
