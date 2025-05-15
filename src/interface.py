@@ -1,23 +1,25 @@
 # src/interface.py
 
 import tkinter as tk
-from tkinter import filedialog, messagebox, scrolledtext
+from tkinter import filedialog, messagebox, scrolledtext, PhotoImage
 from disparo import executar_disparo
 import os
+import platform
 
-icone_path = os.path.abspath('icons/icone.ico')
+icone_path = os.path.abspath('icons/icone.png')
 
 
 class App:
-    def __init__(self, root):
+    def __init__(self, root, config=None):
         self.root = root
+        self.config = config or {}
+        self.planilha_path = self.config.get('caminho_planilha')
+
         self.root.title("Disparador WhatsApp")
         self.root.geometry("400x250")
         self.root.resizable(False, False)
 
-        self.planilha_path = None
-
-        # Elementos da interface
+  
         tk.Label(root, text="Selecione a planilha de contatos:").pack(pady=10)
         tk.Button(root, text="Selecionar Planilha", command=self.selecionar_planilha).pack(pady=5)
         tk.Button(root, text="Iniciar Disparo", command=self.iniciar_disparo_interface).pack(pady=5)
@@ -39,7 +41,8 @@ class App:
             return
         try:
             self.log("[INFO] Iniciando disparo...")
-            executar_disparo(self.planilha_path, self.log)
+            self.config['caminho_planilha'] = self.planilha_path
+            executar_disparo(self.planilha_path, self.config, self.log)
             self.log("[INFO] Disparo concluído.")
         except Exception as e:
             self.log(f"[ERRO] {e}")
@@ -51,10 +54,10 @@ class App:
 
 def iniciar_interface(config=None):
     root = tk.Tk()
-    root.iconbitmap(icone_path)
-    app = App(root)
+    if platform.system() != "Windows":
+        root.iconphoto(True, PhotoImage(file=icone_path))
+    else:
+        root.iconbitmap("icons/icone.ico")
+    app = App(root, config)
     root.mainloop()
-
-
-if __name__ == "__main__":
-    iniciar_interface()
+    

@@ -1,5 +1,5 @@
 # =============================================
-# ARQUIVOS DO SISTEMA OPERACIONAL/IDE
+# SISTEMA OPERACIONAL / IDE
 # =============================================
 .DS_Store
 Thumbs.db
@@ -15,7 +15,7 @@ Thumbs.db
 *.sw?
 
 # =============================================
-# ARQUIVOS TEMPORÁRIOS DO OFFICE/EDITORES
+# ARQUIVOS TEMPORÁRIOS
 # =============================================
 ~/
 *.~
@@ -23,17 +23,17 @@ Thumbs.db
 *.tmp
 ~*.xlsx#
 ~*.xls#
-~*.ods#
-*.xlk
+
 *.bak
+*.log
 
 # =============================================
-# ARQUIVOS PYTHON
+# PYTHON
 # =============================================
 __pycache__/
 *.py[cod]
 *$py.class
-*.pyc
+
 .python-version
 *.pytest_cache/
 .mypy_cache/
@@ -49,18 +49,19 @@ env.bak/
 venv.bak/
 
 # =============================================
-# ARQUIVOS DE LOG E DADOS SENSÍVEIS
+# LOGS E DADOS SENSÍVEIS
 # =============================================
-*.log
-logs/
+
 *.env
 *.secret
 *.key
 *.token
 *.credentials
+logs/
+nao_enviados.xlsx
 
 # =============================================
-# ARQUIVOS DE PACOTES/INSTALAÇÃO
+# PACOTES E ARTEFATOS DE INSTALAÇÃO
 # =============================================
 *.egg-info/
 *.egg
@@ -71,17 +72,23 @@ pip-wheel-metadata/
 *.spec
 
 # =============================================
-# ARQUIVOS DO PROJETO ESPECÍFICOS
+# ESPECÍFICOS DO PROJETO
 # =============================================
-/drivers/
-/PDF/temp_*
-/imagens/temp_*
-/nao_enviados_*.xlsx
+drivers/
+User_Data/
+profile/
+clientes.xlsx
+estrutura.txt
+
+# Cache temporário de planilhas/mídia
+PDF/temp_*
+imagens/temp_*
+nao_enviados_*.xlsx
 
 # =============================================
-# ARQUIVOS DO CHROME/WHATSWEB
+# COMPILAÇÕES CHROME/WHATSAPP
 # =============================================
 chromedriver.log
-/UserData/
-/Local Storage/
-/Session Storage/
+chrome_debug.log
+Local Storage/
+Session Storage/

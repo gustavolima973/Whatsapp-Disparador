@@ -2,17 +2,16 @@
 
 import json
 import os
-
+import sys
 import tkinter as tk
-from interface import App, iniciar_interface
+
+# Corrige os imports mesmo com .desktop
+sys.path.append(os.path.dirname(__file__))
+
+from interface import iniciar_interface
 from disparo import executar_disparo
 
-def iniciar_interface(config=None):
-    root = tk.Tk()
-    app = App(root)
-    root.mainloop()
-
-def carregar_config():
+def carregar_config():    
     config_path = os.path.join(os.path.dirname(__file__), '../config/config.json')
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
@@ -24,13 +23,13 @@ def carregar_config():
 if __name__ == "__main__":
     config = carregar_config()
 
-    # Modo de disparo direto, útil para testes ou .desktop
+   
     if config.get("modo") == "disparo_direto":
         caminho_planilha = config.get("caminho_planilha")
         if caminho_planilha and os.path.exists(caminho_planilha):
-            executar_disparo(caminho_planilha)
+            executar_disparo(caminho_planilha, config)
         else:
             print(f"[ERRO] Caminho da planilha inválido: {caminho_planilha}")
     else:
         iniciar_interface(config)
-e
+        
