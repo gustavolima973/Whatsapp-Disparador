@@ -1,15 +1,12 @@
+
 {
-    "modo": "interface",  
-  
-    "caminho_planilha": "/home/gustavo/Desktop/whatsapp_disparador/clientes.xlsx",
-  
-    "wait_login": 15,        
-    "wait_load_chat": 10,   
-    "wait_between_msgs": 5,   
-  
-    "user_data_dir": "./User_Data",         
-    "nao_enviados_path": "/home/gustavo/Desktop/whatsapp_disparador/nao_enviados.xlsx", 
-  
-    "default_image_path": "/home/gustavo/Desktop/whatsapp_disparador/imagens",
-    "default_pdf_path": "/home/gustavo/Desktop/whatsapp_disparador/PDF"
-  }
+    "modo": "interface",
+    "caminho_planilha": "/home/gustavo/Desktop/whatsapp_disparador/data/clientes.xlsx",
+    "wait_login": 15,
+    "wait_load_chat": 10,
+    "wait_between_msgs": 5,
+    "user_data_dir": "./User_Data",
+    "nao_enviados_path": "data/nao_enviados.xlsx",
+    "default_image_path": "assets/imagens",
+    "default_pdf_path": "assets/PDF"
+}

@@ -1,6 +1,3 @@
-2025/05/15-18:56:06.743 33bc7 Reusing MANIFEST /home/gustavo/Desktop/whatsapp_disparador/User_Data/Default/shared_proto_db/MANIFEST-000001
-2025/05/15-18:56:06.744 33bc7 Recovering log #3
-2025/05/15-18:56:06.745 33bc7 Reusing old log /home/gustavo/Desktop/whatsapp_disparador/User_Data/Default/shared_proto_db/000003.log 
-2025/05/15-18:56:31.094 33bc7 Level-0 table #5: started
-2025/05/15-18:56:31.099 33bc7 Level-0 table #5: 115700 bytes OK
-2025/05/15-18:56:31.102 33bc7 Delete type=0 #3
+2025/05/19-14:29:23.054 831c Reusing MANIFEST /home/gustavo/Desktop/whatsapp_disparador/User_Data/Default/shared_proto_db/MANIFEST-000001
+2025/05/19-14:29:23.054 831c Recovering log #4
+2025/05/19-14:29:23.055 831c Reusing old log /home/gustavo/Desktop/whatsapp_disparador/User_Data/Default/shared_proto_db/000004.log 
